@@ -1,0 +1,17 @@
+Could you have logo be:
+  -----------\
+  | vim       \
+  |            \
+  |            |
+  |            |
+  |      /--\  |
+  |     /    \ |
+  |     \    / |
+  |      \--/  |
+  |         \  |
+  |          \ |
+  --------------
+
+  So a paper with "vim" in Courier New, maybe with lines going across the page and the lines are larger/thicker
+  inside the looking glass?
+

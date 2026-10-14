@@ -3,6 +3,12 @@
   "name": "GitHub Code Review Vi Keys",
   "version": "1.0.0",
   "description": "Navigate GitHub pull request files with j/k, mark viewed with x, collapse with Space, and open review with p.",
+  "icons": {
+    "16": "icons/paper-looking-glass-16.png",
+    "32": "icons/paper-looking-glass-32.png",
+    "48": "icons/paper-looking-glass-48.png",
+    "128": "icons/paper-looking-glass-128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
