@@ -78,6 +78,52 @@ async function eventually(check) {
   assert.ok(check(), 'expected virtualized navigation to complete');
 }
 
+test('f opens the current pull request Files changed tab without requiring rendered diffs', () => {
+  for (const tabPath of ['/files', '/changes']) {
+    const s = setup();
+    s.document.body.innerHTML = `
+      <a href="/example/repo/pull/2/files">Files changed for another PR</a>
+      <a href="https://example.com/example/repo/pull/1/files">Files changed elsewhere</a>
+      <a href="/example/repo/pull/1${tabPath}#diff-123">A comment's diff link</a>
+      <a href="/example/repo/pull/1${tabPath}"><span>Files changed</span><span> 12</span></a>`;
+    const target = s.document.querySelector('a:last-child');
+    const clicked = [];
+    s.document.addEventListener('click', event => {
+      clicked.push(event.target);
+      event.preventDefault();
+    });
+    for (const suffix of ['', '/commits', '/checks', '/commits/abc123']) {
+      s.window.history.pushState({}, '', `/example/repo/pull/1${suffix}`);
+      assert.equal(s.press('f').defaultPrevented, true);
+      assert.equal(clicked.at(-1), target);
+    }
+    assert.equal(clicked.length, 4);
+    s.dispatch('f', 'keydown', { repeat: true });
+    s.dispatch('f', 'keyup');
+    assert.equal(clicked.length, 4);
+    s.window.history.pushState({}, '', `/example/repo/pull/1${tabPath}`);
+    assert.equal(s.press('f').defaultPrevented, true);
+    assert.equal(clicked.length, 4, 'already on Files changed: do not reset review state');
+    assert.deepEqual(s.nativeEvents, []);
+    s.dom.window.close();
+  }
+});
+
+test('f ignores unrelated pages and unavailable Files changed links', () => {
+  const s = setup();
+  s.document.body.innerHTML = '<a href="/example/repo/pull/1/files">Files changed</a>';
+  for (const path of ['/example/repo/issues/1', '/example/repo/pulls', '/example/repo/pull/12']) {
+    s.window.history.pushState({}, '', path);
+    assert.equal(s.press('f').defaultPrevented, false);
+  }
+  s.window.history.pushState({}, '', '/example/repo/pull/1');
+  s.document.querySelector('a').hidden = true;
+  assert.equal(s.press('f').defaultPrevented, false);
+  s.document.body.innerHTML = '';
+  assert.equal(s.press('f').defaultPrevented, false);
+  s.dom.window.close();
+});
+
 test('j/k reveal virtualized neighbors across a large diff, even when the current file unmounts', async () => {
   const s = setup();
   const entries = largeDiffLayout(s);
@@ -331,6 +377,10 @@ test('p opens review; keypress/keyup stay intercepted when focus moves to its te
 
 test('typing, modifiers, composition, other keys, and open dialogs keep normal behavior', () => {
   const s = setup();
+  const tab = s.document.createElement('a');
+  tab.href = '/example/repo/pull/1/files';
+  tab.textContent = 'Files changed';
+  s.document.body.append(tab);
   for (const html of ['<input>', '<textarea></textarea>', '<select></select>', '<div role="textbox" tabindex="0"></div>', '<div contenteditable="true" tabindex="0"></div>']) {
     const wrapper = s.document.createElement('div');
     wrapper.innerHTML = html;
@@ -339,20 +389,22 @@ test('typing, modifiers, composition, other keys, and open dialogs keep normal b
     if (input.hasAttribute('contenteditable')) Object.defineProperty(input, 'isContentEditable', { value: true });
     s.document.body.append(wrapper);
     input.focus();
-    for (const key of ['j', 'k', 'x', ' ', 'p']) assert.equal(s.press(key).defaultPrevented, false);
+    for (const key of ['j', 'k', 'x', ' ', 'p', 'f']) assert.equal(s.press(key).defaultPrevented, false);
     for (const key of ['J', 'K']) assert.equal(s.press(key, { shiftKey: true }).defaultPrevented, false);
     wrapper.remove();
   }
   for (const modifier of ['ctrlKey', 'altKey', 'metaKey', 'isComposing']) {
     assert.equal(s.press('j', { [modifier]: true }).defaultPrevented, false);
+    assert.equal(s.press('f', { [modifier]: true }).defaultPrevented, false);
     assert.equal(s.press('J', { shiftKey: true, [modifier]: true }).defaultPrevented, false);
   }
-  for (const key of ['X', 'P', ' ']) assert.equal(s.press(key, { shiftKey: true }).defaultPrevented, false);
+  for (const key of ['X', 'P', 'F', ' ']) assert.equal(s.press(key, { shiftKey: true }).defaultPrevented, false);
   assert.equal(s.press('q').defaultPrevented, false);
   const dialog = s.document.createElement('dialog');
   dialog.setAttribute('open', '');
   s.document.body.append(dialog);
   assert.equal(s.press('x').defaultPrevented, false);
+  assert.equal(s.press('f').defaultPrevented, false);
   assert.equal(s.press('J', { shiftKey: true }).defaultPrevented, false);
   assert.equal(s.files[0].querySelector('button[aria-pressed]').getAttribute('aria-pressed'), 'false');
   assert.ok(s.nativeEvents.length > 0);

@@ -12,6 +12,7 @@ A Chrome Manifest V3 extension for GitHub pull request **Files changed** pages (
 
 | Key | Action |
 | --- | --- |
+| `f` | Open the pull request's Files changed tab from Conversation, Commits, or Checks |
 | `j` | Move to the next file |
 | `k` | Move to the previous file |
 | Shift+`j` | Scroll down 100 pixels (hold to keep scrolling) |
@@ -26,7 +27,7 @@ For virtualized diffs, navigation scrolls to the current file's boundary and wai
 
 Shortcuts are paused while typing, while a dialog is open, and when modifier keys are held, except for Shift+`j`/`k`. The extension clicks GitHub's own controls to preserve its normal saved state and behavior. It opens the review dialog; submit your review using GitHub's controls.
 
-The keyboard listener registers on `window` in capture phase at `document_start`, preventing default actions and stopping propagation for handled keys, including keypress/keyup. The script loads throughout github.com so it also works when GitHub navigates into a pull request without a full reload; shortcuts activate only on review pages with rendered diff files. It needs no additional permissions, background service, or build step.
+The keyboard listener registers on `window` in capture phase at `document_start`, preventing default actions and stopping propagation for handled keys, including keypress/keyup. The script loads throughout github.com so it also works when GitHub navigates into a pull request without a full reload. The `f` shortcut works on pull request pages with a Files changed link; other shortcuts activate only on review pages with rendered diff files or a remembered selection. It needs no additional permissions, background service, or build step.
 
 ## Development
 

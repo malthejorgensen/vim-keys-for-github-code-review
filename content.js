@@ -2,7 +2,7 @@
   "use strict";
 
   const FILE_SELECTOR = '[id^="diff-"][role="region"]';
-  const KEYS = new Set(["j", "k", "x", " ", "p"]);
+  const KEYS = new Set(["j", "k", "x", " ", "p", "f"]);
   const heldKeys = new Set();
   let selectedId = null;
   let selectedTop = null;
@@ -232,6 +232,17 @@
     );
   }
 
+  function filesChangedLink() {
+    const pullRequest = location.pathname.match(/^\/[^/]+\/[^/]+\/pull\/\d+(?=\/|$)/)?.[0];
+    if (!pullRequest) return null;
+    const paths = new Set([`${pullRequest}/files`, `${pullRequest}/changes`]);
+    const links = [...document.querySelectorAll('a[href]')].filter(link =>
+      link.origin === location.origin && paths.has(link.pathname.replace(/\/$/, '')) && isVisible(link)
+    );
+    // Prefer the tab over links to individual diff lines in comments.
+    return links.find(link => /\bFiles changed\b/i.test(accessibleLabel(link) || link.textContent)) || links[0];
+  }
+
   function intercept(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -240,7 +251,19 @@
   function onKeyDown(event) {
     resetForNavigation();
     const key = event.shiftKey ? event.key.toLowerCase() : event.key;
-    if (!KEYS.has(key) || !isReviewPage() || shouldIgnore(event)) return;
+    if (!KEYS.has(key) || shouldIgnore(event)) return;
+    // This shortcut also works on Conversation, Commits, and Checks, where
+    // there are no rendered diff files to navigate yet.
+    if (key === 'f') {
+      const link = filesChangedLink();
+      if (!link) return;
+      intercept(event);
+      heldKeys.add(event.code || event.key);
+      pendingNavigation = null;
+      if (!event.repeat && !isReviewPage()) link.click();
+      return;
+    }
+    if (!isReviewPage()) return;
     const list = files();
     if (!list.length && selectedId === null) return;
 
