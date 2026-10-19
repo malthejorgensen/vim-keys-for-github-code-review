@@ -445,6 +445,12 @@ test('SPA navigation, DOM replacement, and empty review pages are handled withou
   s.dom.window.close();
 });
 
+test('manifest description is at most 132 characters', () => {
+  const { description } = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+  assert.equal(typeof description, 'string');
+  assert.ok(description.length <= 132, `Manifest description is ${description.length} characters; maximum is 132.`);
+});
+
 test('manifest injects capture handler at document_start across GitHub SPA entry points', () => {
   const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
   assert.equal(manifest.manifest_version, 3);
