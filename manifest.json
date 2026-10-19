@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "GitHub code review Vim keys",
+  "name": "Vim keys for GitHub code review",
   "version": "1.0.0",
   "description": "Review GitHub pull requests with Vim keys: j/k navigate files, x mark viewed, Space folds, p to submit, f opens Files changed.",
   "icons": {

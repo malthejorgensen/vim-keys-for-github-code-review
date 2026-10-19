@@ -1,4 +1,4 @@
-# GitHub Code Review Vi Keys
+# Vim keys for GitHub code review
 
 A Chrome Manifest V3 extension for GitHub pull request **Files changed** pages (both `/files` and `/changes`).
 

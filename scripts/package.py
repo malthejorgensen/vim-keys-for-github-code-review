@@ -21,7 +21,7 @@ def main():
         if not source.is_relative_to(root) or not source.is_file():
             raise ValueError(f"Missing or invalid extension file: {name}")
 
-    output = root / "dist" / f"github-code-review-vikeys-{manifest['version']}.zip"
+    output = root / "dist" / f"vim-keys-for-github-code-review-{manifest['version']}.zip"
     output.parent.mkdir(exist_ok=True)
     # Build a fresh archive each time so removed files cannot linger in it.
     with tempfile.TemporaryDirectory(dir=output.parent) as temporary:
