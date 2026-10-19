@@ -17,7 +17,7 @@ npm run package
 This runs the tests first and creates:
 
 ```text
-dist/github-code-review-vikeys-1.0.0.zip
+dist/vim-keys-for-github-code-review-1.0.0.zip
 ```
 
 The version in the filename comes from `manifest.json`. The ZIP contains `manifest.json` at its root, `LICENSE`, the manifest's content scripts and stylesheets, and the icons referenced by the manifest. Tests, HTML fixtures, dependencies, documentation, old icons, and other repository files are excluded. The `dist/` directory is ignored by Git.
@@ -27,7 +27,7 @@ Each run builds a fresh ZIP and replaces the output for that version. If you cha
 To inspect the archive:
 
 ```sh
-python3 -m zipfile --list dist/github-code-review-vikeys-1.0.0.zip
+python3 -m zipfile --list dist/vim-keys-for-github-code-review-1.0.0.zip
 ```
 
 ## Prepare the listing
