@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GitHub code review Vim keys",
   "version": "1.0.0",
-  "description": "Navigate GitHub pull request files with Vim-like keyboard shortcuts: j/k for file up/down, mark viewed with x, collapse with Space, and open the submit review-widget with p, lastly f goes to the \"Files changes\" tab.",
+  "description": "Review GitHub pull requests with Vim keys: j/k navigate files, x mark viewed, Space folds, p to submit, f opens Files changed.",
   "icons": {
     "16": "icons/paper-looking-glass-16.png",
     "32": "icons/paper-looking-glass-32.png",
