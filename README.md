@@ -32,3 +32,5 @@ The keyboard listener registers on `window` in capture phase at `document_start`
 ## Development
 
 Run `npm install` and `npm test`. Tests use the supplied HTML fixtures and simulate GitHub's control handlers and keyboard listeners. Live GitHub behavior can change if GitHub changes its markup.
+
+To create the Chrome Web Store upload ZIP, run `npm run package`. See [PUBLISHING.md](PUBLISHING.md) for prerequisites, package contents, and submission steps.
